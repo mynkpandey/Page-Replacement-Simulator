@@ -8,7 +8,7 @@ Draws charts to visualize how they perform.
 Has a simple GUI to make it easy to use.
 # Getting Started
 ## What You Need
-Python 3.x installed (any recent version should work).
+Python 3.x installed (any recent version should work).  
 Libraries: tkinter (comes with Python) and matplotlib (you might need to install this).
 ## Setup Steps
 ###  Grab the code from the repo:
