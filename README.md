@@ -36,6 +36,23 @@ simulation.py: Where the algorithm logic lives.
 gui.py: Handles the interface and user inputs.  
 visualization.py: Turns the data into charts.  
 
+---
+
+# Contributors  
+<a href="https://github.com/mynkpandey/Page-Replacement-Simulator/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mynkpandey/Page-Replacement-Simulator" />
+</a>
+<a href="https://github.com/Raushan-7/Page-Replacement-Simulator/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Raushan-7/Page-Replacement-Simulator" />
+</a>
+<a href="https://github.com/YuvrajSingh515/Page-Replacement-Simulator/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=YuvrajSingh515/Page-Replacement-Simulator" />
+</a>
+
+
+---
+
+
 # Feedback or Ideas?
 This is a work in progress, so if you’ve got thoughts on making it better, we’d love to hear them! You can:
 
@@ -43,4 +60,3 @@ Report bugs or suggest features by opening an issue.
 Send a pull request if you tweak something cool.  
 It’s all about learning, so any input helps.  
 
-### Built by Mayank Pandey, Raushan Raj and Yuvraj Singh Sipayya.
