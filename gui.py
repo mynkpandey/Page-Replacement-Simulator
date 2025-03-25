@@ -141,23 +141,34 @@ class PageReplacementGUI:
 
         # Run selected algorithms
         results = {}
+        memory_states = {}
         if self.fifo_var.get():
-            results['FIFO'] = fifo_page_replacement(frames, sequence)
+            total_faults, states = fifo_page_replacement(frames, sequence)
+            results['FIFO'] = total_faults
+            memory_states['FIFO'] = states
         if self.lru_var.get():
-            results['LRU'] = lru_page_replacement(frames, sequence)
+            total_faults, states = lru_page_replacement(frames, sequence)
+            results['LRU'] = total_faults
+            memory_states['LRU'] = states
         if self.optimal_var.get():
-            results['Optimal'] = optimal_page_replacement(frames, sequence)
+            total_faults, states = optimal_page_replacement(frames, sequence)
+            results['Optimal'] = total_faults
+            memory_states['Optimal'] = states
 
         # Display results
         self.result_text.delete(1.0, tk.END)
         for algo, faults in results.items():
             self.result_text.insert(tk.END, f"{algo}: {faults} page faults\n")
 
-        self.results = results  # Store results for visualization
+        self.results = results  
+        self.memory_states = memory_states # Store for visualization
 
     def show_visualization(self):
-        """Display a bar chart of page faults if simulation has been run."""
-        if hasattr(self, 'results'):
-            plot_page_faults(list(self.results.keys()), list(self.results.values()))
+        if hasattr(self, 'results') and hasattr(self, 'memory_states'):
+            plot_page_faults(
+                list(self.results.keys()),
+                list(self.results.values()),
+                self.memory_states
+            )
         else:
             self.result_text.insert(tk.END, "Run the simulation first.\n")
