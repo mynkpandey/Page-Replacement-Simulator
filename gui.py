@@ -6,7 +6,7 @@ from visualization import plot_page_faults
 class CyberpunkGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("CYBERPUNK 2077 PAGE REPLACEMENT SIMULATOR")
+        self.root.title("Cyberpunk 2077 Page-Replacement-Simulator")
         self.root.configure(bg='#0a0a0a')
         
         # Cyberpunk color scheme
@@ -20,7 +20,7 @@ class CyberpunkGUI:
             'warning': '#ff0000'
         }
 
-        # Configure styles
+        # Styles Configuration
         self.style = ttk.Style()
         self.style.theme_use('alt')
         
@@ -59,7 +59,7 @@ class CyberpunkGUI:
                            background=self.colors['neon_green'],
                            troughcolor='#1a1a1a')
 
-        # Create UI
+        # UI Creation
         self.create_widgets()
 
     def create_widgets(self):
@@ -76,15 +76,15 @@ class CyberpunkGUI:
         input_frame = ttk.Frame(main_frame)
         input_frame.pack(fill='x', pady=10)
         
-        ttk.Label(input_frame, text="RAM FRAMES:", style='Header.TLabel').grid(row=0, column=0, padx=5)
+        ttk.Label(input_frame, text="Ram Frames:", style='Header.TLabel').grid(row=0, column=0, padx=5)
         self.frame_entry = ttk.Entry(input_frame, style='Cyber.TEntry', width=10)
         self.frame_entry.grid(row=0, column=1, padx=5)
         
-        ttk.Label(input_frame, text="PAGE STREAM:", style='Header.TLabel').grid(row=0, column=2, padx=5)
+        ttk.Label(input_frame, text="Page Stream:", style='Header.TLabel').grid(row=0, column=2, padx=5)
         self.sequence_entry = ttk.Entry(input_frame, style='Cyber.TEntry', width=40)
         self.sequence_entry.grid(row=0, column=3, padx=5)
         
-        ttk.Button(input_frame, text="UPLOAD DATASET", 
+        ttk.Button(input_frame, text="Upload Dataset", 
                  command=self.load_sequence, style='Cyber.TButton').grid(row=0, column=4, padx=5)
 
         # Algorithm Selector
@@ -106,7 +106,7 @@ class CyberpunkGUI:
         control_frame = ttk.Frame(main_frame)
         control_frame.pack(fill='x', pady=10)
         
-        ttk.Button(control_frame, text="INITIATE SIMULATION", 
+        ttk.Button(control_frame, text="SIMULATE", 
                  command=self.run_simulation, style='Cyber.TButton').pack(side='left', padx=5)
         ttk.Button(control_frame, text="VISUALIZE DATA", 
                  command=self.show_visualization, style='Cyber.TButton').pack(side='left', padx=5)
@@ -144,9 +144,9 @@ class CyberpunkGUI:
                     content = f.read().strip()
                     self.sequence_entry.delete(0, tk.END)
                     self.sequence_entry.insert(0, content)
-                    self.result_text.insert(tk.END, f"\n> DATASET LOADED FROM: {file_path}\n")
+                    self.result_text.insert(tk.END, f"\n> Dataset Loaded From: {file_path}\n")
         except Exception as e:
-            messagebox.showerror("DATA CORRUPTED", f"LOAD FAILURE:\n{str(e)}")
+            messagebox.showerror("Corrupted Data", f"Failure Loading...:\n{str(e)}")
 
     def run_simulation(self):
         try:
@@ -162,7 +162,7 @@ class CyberpunkGUI:
             if self.vars['CLOCK'].get(): handlers.append(('CLOCK', ClockHandler(frames)))
             
             if not handlers:
-                messagebox.showwarning("SYSTEM ALERT", "NO ALGORITHMS SELECTED")
+                messagebox.showwarning("SYSTEM ALERT", "No Algorithms Selected")
                 return
 
             # Run simulation
@@ -180,17 +180,17 @@ class CyberpunkGUI:
             
             # Display results
             self.result_text.delete(1.0, tk.END)
-            self.result_text.insert(tk.END, "\n> SIMULATION RESULTS:\n")
+            self.result_text.insert(tk.END, "\n> Simulation Results:\n")
             for algo, handler in handlers:
-                self.result_text.insert(tk.END, f"{algo}: {handler.page_faults} PAGE FAULTS\n")
+                self.result_text.insert(tk.END, f"{algo}: {handler.page_faults} Page Faults\n")
             
             self.results = {name: handler.page_faults for name, handler in handlers}
             self.memory_states = states
 
         except ValueError as e:
-            messagebox.showerror("INPUT ERROR", f"INVALID DATA FORMAT\n{e}")
+            messagebox.showerror("Input Error", f"Invalid Data Format\n{e}")
         except Exception as e:
-            messagebox.showerror("SYSTEM FAILURE", f"SIMULATION CRASHED\n{e}")
+            messagebox.showerror("System Failure", f"Simulation Crashed\n{e}")
 
     def show_visualization(self):
         if hasattr(self, 'results'):
@@ -198,21 +198,21 @@ class CyberpunkGUI:
                            list(self.results.values()), 
                            self.memory_states)
         else:
-            messagebox.showwarning("NO DATA", "RUN SIMULATION FIRST!")
+            messagebox.showwarning("No Data", "Run Simulation First...")
 
     def save_results(self):
         try:
             if not hasattr(self, 'results'):
-                messagebox.showwarning("NO DATA", "NOTHING TO SAVE!")
+                messagebox.showwarning("No Data", "Nothing To Save...")
                 return
             
             file_path = filedialog.asksaveasfilename(defaultextension=".txt")
             if file_path:
                 with open(file_path, 'w') as f:
-                    f.write(f"FRAMES: {self.frame_entry.get()}\n")
-                    f.write(f"SEQUENCE: {self.sequence_entry.get()}\n\n")
+                    f.write(f"Frames: {self.frame_entry.get()}\n")
+                    f.write(f"Sequence: {self.sequence_entry.get()}\n\n")
                     for algo, faults in self.results.items():
                         f.write(f"{algo}: {faults}\n")
-                self.result_text.insert(tk.END, f"\n> RESULTS SAVED TO: {file_path}\n")
+                self.result_text.insert(tk.END, f"\n> Results Saved to: {file_path}\n")
         except Exception as e:
-            messagebox.showerror("SAVE ERROR", f"FAILED TO SAVE:\n{str(e)}")
+            messagebox.showerror("Save Error", f"Failed To Save:\n{str(e)}")
