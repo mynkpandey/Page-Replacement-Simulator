@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
-from simulation import fifo_page_replacement, lru_page_replacement, optimal_page_replacement
+from simulation import fifo_page_replacement, lru_page_replacement, optimal_page_replacement, clock_page_replacement
+from simulation import FIFOHandler, LRUHandler, OptimalHandler, ClockHandler
 from visualization import plot_page_faults
-from simulation import FIFOHandler, LRUHandler, OptimalHandler  # Add this line
 
 class PageReplacementGUI:
     def __init__(self, root):
@@ -37,6 +37,7 @@ class PageReplacementGUI:
         self.fifo_var = tk.IntVar()
         self.lru_var = tk.IntVar()
         self.optimal_var = tk.IntVar()
+        self.clock_var = tk.IntVar()
         
         self.fifo_check = tk.Checkbutton(algo_frame, text="FIFO", variable=self.fifo_var)
         self.fifo_check.pack(side='left', padx=20)
@@ -44,6 +45,8 @@ class PageReplacementGUI:
         self.lru_check.pack(side='left', padx=20)
         self.optimal_check = tk.Checkbutton(algo_frame, text="Optimal", variable=self.optimal_var)
         self.optimal_check.pack(side='left', padx=20)
+        self.clock_check = tk.Checkbutton(algo_frame, text="Clock", variable=self.clock_var)
+        self.clock_check.pack(side='left', padx=20)
 
         # Action buttons
         button_frame = tk.Frame(root)
@@ -121,7 +124,7 @@ class PageReplacementGUI:
 
     def run_simulation(self):
         """Run the simulation with progress updates"""
-        # Validation
+        # Validate inputs
         frames_input = self.frame_entry.get()
         if not frames_input.isdigit() or int(frames_input) <= 0:
             messagebox.showerror("Error", "Number of frames must be a positive integer")
@@ -141,14 +144,23 @@ class PageReplacementGUI:
         self.progress['value'] = 0
         total_pages = len(sequence)
         
-        # Initialize handlers for selected algorithms
+        # Initialize handlers list
         handlers = []
+        
+        # Add selected algorithms
         if self.fifo_var.get():
             handlers.append(('FIFO', FIFOHandler(frames)))
         if self.lru_var.get():
             handlers.append(('LRU', LRUHandler(frames)))
         if self.optimal_var.get():
             handlers.append(('Optimal', OptimalHandler(frames, sequence)))
+        if self.clock_var.get():
+            handlers.append(('Clock', ClockHandler(frames)))
+
+        # Check if any algorithms were selected
+        if not handlers:
+            messagebox.showerror("Error", "No algorithms selected!")
+            return
 
         results = {}
         memory_states = {}

@@ -54,6 +54,31 @@ class OptimalHandler:
             self.page_faults += 1
         self.current_step += 1
         return self.page_faults, list(self.memory)
+    
+class ClockHandler:
+    def __init__(self, frames):
+        self.frames = frames
+        self.memory = [None] * frames
+        self.use_bits = [0] * frames
+        self.pointer = 0
+        self.page_faults = 0
+
+    def step(self, page):
+        if page in self.memory:
+            idx = self.memory.index(page)
+            self.use_bits[idx] = 1
+        else:
+            while True:
+                if self.use_bits[self.pointer] == 0:
+                    self.memory[self.pointer] = page
+                    self.use_bits[self.pointer] = 1
+                    self.pointer = (self.pointer + 1) % self.frames
+                    self.page_faults += 1
+                    break
+                else:
+                    self.use_bits[self.pointer] = 0
+                    self.pointer = (self.pointer + 1) % self.frames
+        return self.page_faults, list(self.memory)
 
 # Original functions for compatibility
 def fifo_page_replacement(frames, pages):
@@ -70,6 +95,12 @@ def lru_page_replacement(frames, pages):
 
 def optimal_page_replacement(frames, pages):
     handler = OptimalHandler(frames, pages)
+    for page in pages:
+        handler.step(page)
+    return handler.page_faults
+
+def clock_page_replacement(frames, pages):
+    handler = ClockHandler(frames)
     for page in pages:
         handler.step(page)
     return handler.page_faults
