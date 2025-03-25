@@ -58,6 +58,13 @@ class PageReplacementGUI:
                                   command=self.show_visualization,
                                   bg='#FF9800', fg='white')
         self.viz_button.pack(side='left', padx=10)
+        
+        # Add save button
+        self.save_button = tk.Button(button_frame, text="💾 Save Results", 
+                                   command=self.save_results,
+                                   bg='#4CAF50', fg='white')
+        self.save_button.pack(side='left', padx=10)
+
 
         # Results display with scrollbar
         result_frame = tk.LabelFrame(root, text="Results", padx=10, pady=10)
@@ -69,6 +76,31 @@ class PageReplacementGUI:
         
         self.result_text.pack(side='left', fill='both', expand=True)
         scrollbar.pack(side='right', fill='y')
+
+    def save_results(self):
+        """Save simulation results to a text file"""
+        if not hasattr(self, 'results') or not self.results:
+            messagebox.showerror("Error", "No results to save. Run simulation first.")
+            return
+            
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt"), ("All files", "*.*")]
+        )
+        
+        if file_path:
+            try:
+                with open(file_path, 'w') as f:
+                    f.write("Page Replacement Simulation Results\n")
+                    f.write("="*40 + "\n")
+                    f.write(f"Number of Frames: {self.frame_entry.get()}\n")
+                    f.write(f"Page Sequence: {self.sequence_entry.get()}\n\n")
+                    f.write("Page Faults:\n")
+                    for algo, faults in self.results.items():
+                        f.write(f"{algo}: {faults}\n")
+                messagebox.showinfo("Success", f"Results saved to:\n{file_path}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save file:\n{str(e)}")
 
     def load_sequence(self):
         """Load page sequence from a text file"""
