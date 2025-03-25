@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog
 from simulation import fifo_page_replacement, lru_page_replacement, optimal_page_replacement
 from visualization import plot_page_faults
+from simulation import FIFOHandler, LRUHandler, OptimalHandler  # Add this line
 
 class PageReplacementGUI:
     def __init__(self, root):
@@ -9,11 +10,11 @@ class PageReplacementGUI:
         self.root.title("Page Replacement Simulator")
         
         # Configure grid weights for responsive layout
-        for i in range(4):
+        for i in range(6):
             self.root.columnconfigure(i, weight=1)
             self.root.rowconfigure(i, weight=1)
 
-        # Input fields with improved layout
+        # Input fields
         self.frame_label = tk.Label(root, text="Number of Frames:")
         self.frame_label.grid(row=0, column=0, padx=5, pady=5, sticky='e')
         self.frame_entry = tk.Entry(root)
@@ -24,13 +25,12 @@ class PageReplacementGUI:
         self.sequence_entry = tk.Entry(root)
         self.sequence_entry.grid(row=1, column=1, padx=5, pady=5, sticky='ew')
         
-        # Load file button with proper styling
         self.load_button = tk.Button(root, text="📂 Load File", 
                                    command=self.load_sequence,
                                    bg='#4CAF50', fg='white')
         self.load_button.grid(row=1, column=2, padx=5, pady=5, sticky='ew')
 
-        # Algorithm selection with frame
+        # Algorithm selection
         algo_frame = tk.LabelFrame(root, text="Algorithms", padx=10, pady=10)
         algo_frame.grid(row=2, column=0, columnspan=4, padx=10, pady=10, sticky='nsew')
         
@@ -45,7 +45,7 @@ class PageReplacementGUI:
         self.optimal_check = tk.Checkbutton(algo_frame, text="Optimal", variable=self.optimal_var)
         self.optimal_check.pack(side='left', padx=20)
 
-        # Styled buttons
+        # Action buttons
         button_frame = tk.Frame(root)
         button_frame.grid(row=3, column=0, columnspan=4, pady=10)
         
@@ -59,16 +59,18 @@ class PageReplacementGUI:
                                   bg='#FF9800', fg='white')
         self.viz_button.pack(side='left', padx=10)
         
-        # Add save button
         self.save_button = tk.Button(button_frame, text="💾 Save Results", 
                                    command=self.save_results,
                                    bg='#4CAF50', fg='white')
         self.save_button.pack(side='left', padx=10)
 
+        # Progress bar
+        self.progress = ttk.Progressbar(root, orient='horizontal', length=300, mode='determinate')
+        self.progress.grid(row=4, column=0, columnspan=4, pady=10, sticky='ew')
 
-        # Results display with scrollbar
+        # Results display
         result_frame = tk.LabelFrame(root, text="Results", padx=10, pady=10)
-        result_frame.grid(row=4, column=0, columnspan=4, padx=10, pady=10, sticky='nsew')
+        result_frame.grid(row=5, column=0, columnspan=4, padx=10, pady=10, sticky='nsew')
         
         self.result_text = tk.Text(result_frame, height=8, width=60)
         scrollbar = tk.Scrollbar(result_frame, command=self.result_text.yview)
@@ -109,7 +111,6 @@ class PageReplacementGUI:
             try:
                 with open(file_path, 'r') as f:
                     content = f.read().strip()
-                    # Validate file content before inserting
                     if all(x.strip().isdigit() for x in content.split(',')):
                         self.sequence_entry.delete(0, tk.END)
                         self.sequence_entry.insert(0, content)
@@ -119,16 +120,15 @@ class PageReplacementGUI:
                 messagebox.showerror("Error", f"Failed to read file: {str(e)}")
 
     def run_simulation(self):
-        """Run the selected page replacement algorithms and display results."""
-        # Validate number of frames input
+        """Run the simulation with progress updates"""
+        # Validation
         frames_input = self.frame_entry.get()
         if not frames_input.isdigit() or int(frames_input) <= 0:
             messagebox.showerror("Error", "Number of frames must be a positive integer")
             return
 
-        # Validate page sequence input
         sequence_input = self.sequence_entry.get().strip()
-        if not sequence_input:  # Check for empty input
+        if not sequence_input:
             messagebox.showerror("Error", "Page sequence cannot be empty")
             return
         try:
@@ -138,32 +138,45 @@ class PageReplacementGUI:
             return
 
         frames = int(frames_input)
+        self.progress['value'] = 0
+        total_pages = len(sequence)
+        
+        # Initialize handlers for selected algorithms
+        handlers = []
+        if self.fifo_var.get():
+            handlers.append(('FIFO', FIFOHandler(frames)))
+        if self.lru_var.get():
+            handlers.append(('LRU', LRUHandler(frames)))
+        if self.optimal_var.get():
+            handlers.append(('Optimal', OptimalHandler(frames, sequence)))
 
-        # Run selected algorithms
         results = {}
         memory_states = {}
-        if self.fifo_var.get():
-            total_faults, states = fifo_page_replacement(frames, sequence)
-            results['FIFO'] = total_faults
-            memory_states['FIFO'] = states
-        if self.lru_var.get():
-            total_faults, states = lru_page_replacement(frames, sequence)
-            results['LRU'] = total_faults
-            memory_states['LRU'] = states
-        if self.optimal_var.get():
-            total_faults, states = optimal_page_replacement(frames, sequence)
-            results['Optimal'] = total_faults
-            memory_states['Optimal'] = states
+
+        # Process each page with progress updates
+        for i, page in enumerate(sequence):
+            for algo_name, handler in handlers:
+                faults, mem_state = handler.step(page)
+                memory_states.setdefault(algo_name, []).append(faults)
+            
+            # Update progress bar
+            self.progress['value'] = (i + 1) / total_pages * 100
+            self.root.update_idletasks()
+
+        # Collect final results
+        for algo_name, handler in handlers:
+            results[algo_name] = handler.page_faults
 
         # Display results
         self.result_text.delete(1.0, tk.END)
         for algo, faults in results.items():
             self.result_text.insert(tk.END, f"{algo}: {faults} page faults\n")
 
-        self.results = results  
-        self.memory_states = memory_states # Store for visualization
+        self.results = results
+        self.memory_states = memory_states
 
     def show_visualization(self):
+        """Display visualization of results"""
         if hasattr(self, 'results') and hasattr(self, 'memory_states'):
             plot_page_faults(
                 list(self.results.keys()),
