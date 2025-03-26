@@ -38,7 +38,6 @@ visualization.py: Turns the data into charts.
 
 ---
 
-### Made by Mayank Pandey, Raushan Raj and Yuvraj Singh Sipayya.
 # Feedback or Ideas?
 This is a work in progress, so if you’ve got thoughts on making it better, we’d love to hear them! You can:
 
@@ -46,3 +45,6 @@ Report bugs or suggest features by opening an issue.
 Send a pull request if you tweak something cool.  
 It’s all about learning, so any input helps.  
 
+---
+
+### Made by Mayank Pandey, Raushan Raj and Yuvraj Singh Sipayya.
