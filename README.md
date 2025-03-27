@@ -1,11 +1,11 @@
 # Page-Replacement-Simulator
-This project is a simulator we built to dig into how page replacement algorithms work in operating systems. It focuses on three big ones: FIFO (First-In-First-Out), LRU (Least Recently Used), and Optimal. The idea is to see how these handle memory frames and page requests, tracking stuff like page faults and showing the results in charts. It’s a hands-on way to compare their efficiency.
+This project is a simulator we built to dig into how page replacement algorithms work in operating systems. It focuses on three big ones: FIFO (First-In-First-Out), LRU (Least Recently Used), and Optimal. Furthur Clock algorithm was added to learn more algorithms. The idea is to see how these handle memory frames and page requests, tracking stuff like page faults and showing the results in charts. It’s a hands-on way to compare their efficiency.
 # What It Does
-Runs simulations for FIFO, LRU, and Optimal algorithms.
+Runs simulations for FIFO, LRU, Clock and Optimal algorithms.
 Lets you set the number of memory frames and type in your own page request sequence.
 Shows page faults for each algorithm so you can compare them.
 Draws charts to visualize how they perform.
-Has a simple GUI to make it easy to use.
+Has a simple GUI to make it easy to use and **CyberPunk 2077** theme for better interface.
 # Getting Started
 ## What You Need
 Python 3.x installed (any recent version should work).  
@@ -23,7 +23,7 @@ Libraries: tkinter (comes with Python) and matplotlib (you might need to install
 ### In the GUI:
 Pick how many memory frames you want.  
 Enter a page sequence (like 1,2,3,4,1).  
-Choose which algorithms to test (FIFO, LRU, Optimal).  
+Choose which algorithms to test (FIFO, LRU, Optimal or Clock).  
 Hit Run Simulation to see what happens.  
 Check out the page faults and the comparison chart it spits out.
 # Tools I Used
