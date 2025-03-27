@@ -12,14 +12,22 @@ Python 3.x installed (any recent version should work).
 Libraries: tkinter (comes with Python) and matplotlib (you might need to install this).
 ## Setup Steps
 ###  Grab the code from the repo:
-```git clone https://github.com/mynkpandey/Page-Replacement-Simulator.git```
+```bash
+git clone https://github.com/mynkpandey/Page-Replacement-Simulator.git
+```
 ### Move into the project folder:
-```cd Page-Replacement-Simulator```
+```bash
+cd Page-Replacement-Simulator
+```
 ### Install matplotlib if you don’t have it:
-```pip install matplotlib```
+```bash
+pip install matplotlib
+```
 ## How to Run It
 ### Start the simulator with:
-```python main.py```
+```bash
+python main.py
+```
 ### In the GUI:
 Pick how many memory frames you want.  
 Enter a page sequence (like 1,2,3,4,1).  
